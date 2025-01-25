@@ -1,0 +1,63 @@
+---
+title: "CAPM_msft_spy"
+author: "Sriraj Muddu"
+date: "2025-01-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readr)
+library(ggplot2)
+library(dplyr)
+```
+
+### Reading file data and plotting the relationship between return rates:
+
+```{r}
+totalReturn <- read_csv('totalReturnRates.csv')
+totalReturn <- totalReturn %>%
+  mutate(
+    Excess_MSFT = `Return MSFT` - `Return T-Bill`,
+    Excess_SPY = `Return S&P` - `Return T-Bill`
+  )
+
+ggplot(totalReturn, aes(x=Excess_MSFT, y = Excess_SPY)) + geom_point()
+
+```
+
+### Because the plot is visibly linear and there are not many outliers, we will attempt a simple linear regression
+
+```{r}
+regressionModel <- lm(Excess_MSFT  ~ Excess_SPY, data=totalReturn)
+
+summary(regressionModel)
+
+plot(regressionModel)
+```
+
+
+
+### Analysis:
+*   In the Residuals vs. Fitted graph, the residuals cluster around 0, showing that a linear model was a good fit for this data. 
+*   The Q-Q plot is relatively linear, showing that the probability distributions for Excess SPY and Excess MSFT are quite similar
+*   The scale-location graph is roughly horizontal, suggesting a high degree of homoscedasticity
+*   There are not an extreme quantity of outliers with high leverage, however there are a few
+
+Sample Predictions:
+
+
+
+```{r}
+
+beta <- regressionModel$coefficients[2]
+
+intercept <- regressionModel$coefficients[1]
+
+estimatedMSFTReturn <- intercept + beta*(0.0022 - (4.31/31)) + (4.31/31) 
+
+print(estimatedMSFTReturn)
+
+```
+
+### Although this estimation was not extremely accurate (the true daily return on this day was -0.0059%), by averaging the output over longer time frames the predictions become more accurate. 
