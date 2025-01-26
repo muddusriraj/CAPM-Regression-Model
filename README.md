@@ -1,4 +1,4 @@
-Simple CAPM Regression using the past 9 years of data regarding daily returns.
+CAPM Regression using the past 9 years of data regarding daily returns.
 
 Data collected from NASDAQ (http://nasdaq.com/) and Federal Reserve Bank of St. Louis (https://fred.stlouisfed.org/).
 
